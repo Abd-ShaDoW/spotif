@@ -1,0 +1,100 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id                     Int        @id @default(autoincrement())
+  email                  String     @unique
+  userName               String
+  password               String
+  emailConfirmed         Boolean    @default(false)
+  emailConfirmationToken String?    @unique
+  passwordResetToken     String?    @unique
+  createdAt              DateTime   @default(now())
+  image                  String?
+  favorite               favorite[]
+  playlist               playlist[]
+}
+
+model favorite {
+  user    user @relation(fields: [user_id], references: [id])
+  user_id Int
+  song    song @relation(fields: [song_id], references: [id])
+  song_id Int
+
+  @@id([user_id, song_id])
+}
+
+model artist {
+  id                     Int           @id @default(autoincrement())
+  email                  String        @unique
+  name                   String        @unique
+  password               String
+  emailConfirmed         Boolean       @default(false)
+  emailConfirmationToken String?       @unique
+  passwordResetToken     String?       @unique
+  createdAt              DateTime      @default(now())
+  image                  String?
+  song_artist            song_artist[]
+  album                  album[]
+}
+
+model song {
+  id            Int             @id @default(autoincrement())
+  Title         String
+  song_content  String
+  image         String?
+  album_id      Int?
+  album         album?          @relation(fields: [album_id], references: [id])
+  favorite      favorite[]
+  song_artist   song_artist[]
+  playlist_song playlist_song[]
+}
+
+model song_artist {
+  song      song   @relation(fields: [song_id], references: [id])
+  song_id   Int
+  artist    artist @relation(fields: [artist_id], references: [id])
+  artist_id Int
+
+  @@id([song_id, artist_id])
+}
+
+model album {
+  id        Int      @id @default(autoincrement())
+  title     String
+  image     String?
+  createdAt DateTime @default(now())
+  artist    artist   @relation(fields: [artist_id], references: [id])
+  artist_id Int
+  song      song[]
+}
+
+model playlist {
+  id            Int             @id @default(autoincrement())
+  title         String
+  user          user            @relation(fields: [user_id], references: [id])
+  user_id       Int
+  image         String?
+  playlist_song playlist_song[]
+}
+
+model playlist_song {
+  playlist    playlist @relation(fields: [playlist_id], references: [id])
+  playlist_id Int
+  song        song     @relation(fields: [song_id], references: [id])
+  song_id     Int
+
+  @@id([playlist_id, song_id])
+}
