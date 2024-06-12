@@ -6,6 +6,7 @@ import {
   sendEmailConfirmation,
   sendPasswordResetEmail,
 } from '../middleware/emailUtil';
+import { EntityType } from '../helpers/entityType';
 import { generateToken } from '../helpers/token';
 import { authSchema, passwordResetSchema } from '../helpers/validate';
 import { Client } from '@elastic/elasticsearch';
@@ -63,7 +64,11 @@ export const signUp = async (req: Request, res: Response) => {
     });
 
     // Send email to the artist to confirm
-    await sendEmailConfirmation(result.email, emailConfirmationToken, 'artist');
+    await sendEmailConfirmation(
+      result.email,
+      emailConfirmationToken,
+      EntityType.Artist
+    );
 
     return res.status(201).json({ artist, elastic });
   } catch (e) {
@@ -259,7 +264,7 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
     });
 
     // Send password reset email
-    await sendPasswordResetEmail(email, passwordResetToken, 'artist');
+    await sendPasswordResetEmail(email, passwordResetToken, EntityType.Artist);
 
     res.status(200).json('Password reset email sent');
   } catch (e) {

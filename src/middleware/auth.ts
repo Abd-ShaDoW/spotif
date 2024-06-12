@@ -1,5 +1,6 @@
 import JWT from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+import { EntityType } from '../helpers/entityType';
 
 declare global {
   namespace Express {
@@ -13,7 +14,7 @@ declare global {
 interface MyJwtPayload {
   id: number;
   name: string;
-  entityType: 'user' | 'artist'; // Entity type: 'user' or 'artist'
+  entityType: EntityType; // Entity type: 'user' or 'artist'
 }
 
 export const authMiddleware = async (
@@ -33,9 +34,9 @@ export const authMiddleware = async (
     const { id, name, entityType } = decoded;
 
     // Determine the appropriate property (user or artist) to attach to the request object
-    if (entityType === 'user') {
+    if (entityType === EntityType.User) {
       req.user = { id, userName: name };
-    } else if (entityType === 'artist') {
+    } else if (entityType === EntityType.Artist) {
       req.artist = { id, name };
     } else {
       throw new Error('Invalid entity type');
