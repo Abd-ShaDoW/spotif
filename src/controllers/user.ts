@@ -6,6 +6,7 @@ import {
   sendEmailConfirmation,
   sendPasswordResetEmail,
 } from '../middleware/emailUtil';
+import { EntityType } from '../helpers/entityType';
 import { generateToken } from '../helpers/token';
 import { authSchema, passwordResetSchema } from '../helpers/validate';
 import fs from 'fs';
@@ -42,7 +43,11 @@ export const signUp = async (req: Request, res: Response) => {
     });
 
     // Send email to the user to confirm
-    await sendEmailConfirmation(result.email, emailConfirmationToken, 'user');
+    await sendEmailConfirmation(
+      result.email,
+      emailConfirmationToken,
+      EntityType.User
+    );
 
     return res.status(201).json(user);
   } catch (e) {
@@ -176,7 +181,7 @@ export const requestPasswordReset = async (req: Request, res: Response) => {
     });
 
     // Send password reset email
-    await sendPasswordResetEmail(email, passwordResetToken, 'user');
+    await sendPasswordResetEmail(email, passwordResetToken, EntityType.User);
 
     res.status(200).json('Password reset email sent');
   } catch (e) {
@@ -214,84 +219,5 @@ export const resetPassword = async (req: Request, res: Response) => {
     res.status(200).json('Password reset successfully');
   } catch (e) {
     res.status(500).json({ e: 'Failed to reset password' });
-  }
-};
-
-export const addFavorite = async (req: Request, res: Response) => {
-  try {
-    // Find song
-    const song = await prisma.song.findUnique({
-      where: { id: +req.body.song_id },
-    });
-
-    if (!song) {
-      return res.status(404).json({ e: 'Failed to find song' });
-    }
-
-    const user = +req.user.id;
-
-    // Check if song already in favorite
-    const find = await prisma.favorite.findFirst({
-      where: {
-        song_id: +req.body.song_id,
-        user_id: +user,
-      },
-    });
-
-    if (find) {
-      return res.json({ e: 'Song already in favorite' });
-    }
-
-    // Add song to favorite
-    const favorite = await prisma.favorite.create({
-      data: {
-        user_id: +user,
-        song_id: +req.body.song_id,
-      },
-    });
-    return res.status(200).json(favorite);
-  } catch (e) {
-    return res.status(500).json({ e: 'Failed to add to favorite' });
-  }
-};
-
-export const unfavorite = async (req: Request, res: Response) => {
-  try {
-    // Find song in favorite
-    const find = await prisma.favorite.findFirst({
-      where: { user_id: +req.user.id, song_id: +req.body.song_id },
-    });
-
-    if (!find) {
-      return res.status(404).json({ e: 'Cant find favorite' });
-    }
-
-    // Delete song from favortie
-    const favorite = await prisma.favorite.delete({
-      where: {
-        user_id_song_id: {
-          user_id: +req.user.id,
-          song_id: +req.body.song_id,
-        },
-      },
-    });
-    return res.status(200).json(favorite);
-  } catch (e) {
-    return res.status(500).json({ e: 'Failed to remove favorite' });
-  }
-};
-
-export const getFavorites = async (req: Request, res: Response) => {
-  try {
-    const user = req.user.id;
-
-    // Get all favorite with user_id
-    const favorite = await prisma.favorite.findMany({
-      where: { user_id: +user },
-    });
-
-    return res.status(200).json(favorite);
-  } catch (e) {
-    return res.status(500).json({ e: 'Failed to get favorites' });
   }
 };

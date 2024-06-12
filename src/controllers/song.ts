@@ -285,3 +285,82 @@ export const addArtist = async (req: Request, res: Response) => {
     return res.status(500).json({ e: 'Failed to add artist' });
   }
 };
+
+export const addFavorite = async (req: Request, res: Response) => {
+  try {
+    // Find song
+    const song = await prisma.song.findUnique({
+      where: { id: +req.body.song_id },
+    });
+
+    if (!song) {
+      return res.status(404).json({ e: 'Failed to find song' });
+    }
+
+    const user = +req.user.id;
+
+    // Check if song already in favorite
+    const find = await prisma.favorite.findFirst({
+      where: {
+        song_id: +req.body.song_id,
+        user_id: +user,
+      },
+    });
+
+    if (find) {
+      return res.json({ e: 'Song already in favorite' });
+    }
+
+    // Add song to favorite
+    const favorite = await prisma.favorite.create({
+      data: {
+        user_id: +user,
+        song_id: +req.body.song_id,
+      },
+    });
+    return res.status(200).json(favorite);
+  } catch (e) {
+    return res.status(500).json({ e: 'Failed to add to favorite' });
+  }
+};
+
+export const unfavorite = async (req: Request, res: Response) => {
+  try {
+    // Find song in favorite
+    const find = await prisma.favorite.findFirst({
+      where: { user_id: +req.user.id, song_id: +req.body.song_id },
+    });
+
+    if (!find) {
+      return res.status(404).json({ e: 'Cant find favorite' });
+    }
+
+    // Delete song from favortie
+    const favorite = await prisma.favorite.delete({
+      where: {
+        user_id_song_id: {
+          user_id: +req.user.id,
+          song_id: +req.body.song_id,
+        },
+      },
+    });
+    return res.status(200).json(favorite);
+  } catch (e) {
+    return res.status(500).json({ e: 'Failed to remove favorite' });
+  }
+};
+
+export const getFavorites = async (req: Request, res: Response) => {
+  try {
+    const user = req.user.id;
+
+    // Get all favorite with user_id
+    const favorite = await prisma.favorite.findMany({
+      where: { user_id: +user },
+    });
+
+    return res.status(200).json(favorite);
+  } catch (e) {
+    return res.status(500).json({ e: 'Failed to get favorites' });
+  }
+};

@@ -1,4 +1,5 @@
 import nodemailer, { Transporter } from 'nodemailer';
+import { EntityType } from '../helpers/entityType';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -32,9 +33,9 @@ const sendEmail = async (
 export const sendEmailConfirmation = async (
   userEmail: string,
   token: string,
-  userType: 'user' | 'artist'
+  userType: EntityType
 ) => {
-  const confirmationUrl = `http://localhost:3000/${userType}/confirm-email?token=${token}`;
+  const confirmationUrl = `http://localhost:3000/${userType.toLowerCase()}/confirm-email?token=${token}`;
   const subject = 'Email confirmation';
   const text =
     'Please confirm your emial by clicking the following link: ${confirmationUrl}`';
@@ -46,9 +47,9 @@ export const sendEmailConfirmation = async (
 export const sendPasswordResetEmail = async (
   userEmail: string,
   token: string,
-  userType: 'user' | 'artist'
+  userType: EntityType
 ) => {
-  const resetUrl = `http://localhost:3000/${userType}/reset-password?token=${token}`;
+  const resetUrl = `http://localhost:3000/${userType.toLowerCase()}/reset-password?token=${token}`;
   const subject = 'Password Reset';
   const text = `You can reset your password by clicking the following link: ${resetUrl}`;
   const html = `<p>You can reset your password by clicking the following link: <a href="${resetUrl}">${resetUrl}</a></p>`;
