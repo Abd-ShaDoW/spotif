@@ -10,7 +10,7 @@ import { EntityType } from '../helpers/entityType';
 import { generateToken } from '../helpers/token';
 import { authSchema, passwordResetSchema } from '../helpers/validate';
 import { Client } from '@elastic/elasticsearch';
-import fs from 'fs';
+import { removeOldFile } from '../helpers/util';
 
 const prisma = new PrismaClient();
 const client = new Client({
@@ -132,7 +132,7 @@ export const signIn = async (req: Request, res: Response) => {
       {
         id: artist.id,
         name: artist.name,
-        entityType: 'artist',
+        entityType: EntityType.Artist,
       },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_LIFETIME }
@@ -184,6 +184,10 @@ export const update = async (req: Request, res: Response) => {
         where: { artist_id: artistId },
       });
 
+      if (albums.length === 0) {
+        return;
+      }
+
       const albumUpdates = albums.flatMap((album) => [
         { update: { _index: 'albums', _id: album.id.toString() } },
         { doc: { artist: { id: artistId, name: artistName } } },
@@ -203,6 +207,11 @@ export const update = async (req: Request, res: Response) => {
         where: { song_artist: { some: { artist_id: artistId } } },
         include: { song_artist: { include: { artist: true } } },
       });
+
+      if (songs.length === 0) {
+        return;
+      }
+
       const songUpdates = songs.flatMap((song) => [
         { update: { _index: 'songs', _id: song.id.toString() } },
         {
@@ -227,11 +236,7 @@ export const update = async (req: Request, res: Response) => {
     await updateSongs(artist.id, artist.name);
 
     // If there is new imagepath then delete the old if it exist
-    if (imagePath && old.image) {
-      if (fs.existsSync(old.image)) {
-        fs.unlinkSync(old.image);
-      }
-    }
+    removeOldFile(imagePath, old.image);
 
     return res.status(200).json(artist);
   } catch (e) {

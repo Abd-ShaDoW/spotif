@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
-import fs from 'fs';
+import { removeOldFile } from '../helpers/util';
 
 const prisma = new PrismaClient();
 // Create routers for the playlists and check the controllers
@@ -42,11 +42,7 @@ export const update = async (req: Request, res: Response) => {
     });
 
     // If there is new imagepath then delete the old if it exist
-    if (imagePath && old.image) {
-      if (fs.existsSync(old.image)) {
-        fs.unlinkSync(old.image);
-      }
-    }
+    removeOldFile(imagePath, old.image);
 
     return res.status(200).json(playlist);
   } catch (e) {

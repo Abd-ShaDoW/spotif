@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { Request, Response } from 'express';
 import { Client } from '@elastic/elasticsearch';
-import fs from 'fs';
+import { removeOldFile } from '../helpers/util';
 
 const prisma = new PrismaClient();
 const client = new Client({
@@ -205,11 +205,7 @@ export const update = async (req: Request, res: Response) => {
     }
 
     // If there is new imagepath then delete the old if it exist
-    if (imagePath && old.image) {
-      if (fs.existsSync(old.image)) {
-        fs.unlinkSync(old.image);
-      }
-    }
+    removeOldFile(imagePath, old.image);
 
     return res.status(200).json({ song, elastic });
   } catch (e) {
