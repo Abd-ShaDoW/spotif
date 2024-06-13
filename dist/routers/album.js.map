@@ -1,1 +1,0 @@
-{"version":3,"file":"album.js","sourceRoot":"","sources":["../../src/routers/album.ts"],"names":[],"mappings":";;;;;AAAA,sDAA8B;AAC9B,MAAM,MAAM,GAAG,iBAAO,CAAC,MAAM,EAAE,CAAC;AAChC,6CAAoD;AACpD,+CAAkD;AAElD,gDAAmD;AAEnD,MAAM,CAAC,IAAI,CAAC,SAAS,EAAE,qBAAc,EAAE,mBAAW,EAAE,cAAM,CAAC,CAAC;AAC5D,MAAM,CAAC,GAAG,CAAC,MAAM,EAAE,WAAG,CAAC,CAAC;AAExB,kBAAe,MAAM,CAAC"}
