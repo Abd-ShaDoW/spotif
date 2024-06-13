@@ -1,8 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/prismaClient';
 import { Request, Response } from 'express';
 import { removeOldFile } from '../helpers/util';
 
-const prisma = new PrismaClient();
 // Create routers for the playlists and check the controllers
 
 export const create = async (req: Request, res: Response) => {

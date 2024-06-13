@@ -1,19 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/prismaClient';
 import { Request, Response } from 'express';
-import { Client } from '@elastic/elasticsearch';
+import client from '../config/elasticsearchClient';
 import { removeOldFile } from '../helpers/util';
-
-const prisma = new PrismaClient();
-const client = new Client({
-  node: 'https://localhost:9200',
-  auth: {
-    username: process.env.elasticUser,
-    password: process.env.elasticPass,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
 
 export const create = async (req: Request, res: Response) => {
   try {
