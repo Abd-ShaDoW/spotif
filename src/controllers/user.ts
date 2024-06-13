@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import prisma from '../config/prismaClient';
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import JWT from 'jsonwebtoken';
@@ -10,8 +10,6 @@ import { EntityType } from '../helpers/entityType';
 import { generateToken } from '../helpers/token';
 import { authSchema, passwordResetSchema } from '../helpers/validate';
 import { removeOldFile } from '../helpers/util';
-
-const prisma = new PrismaClient();
 
 export const signUp = async (req: Request, res: Response) => {
   try {

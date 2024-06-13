@@ -1,16 +1,5 @@
 import { Request, Response } from 'express';
-import { Client } from '@elastic/elasticsearch';
-
-const client = new Client({
-  node: 'https://localhost:9200',
-  auth: {
-    username: process.env.elasticUser,
-    password: process.env.elasticPass,
-  },
-  tls: {
-    rejectUnauthorized: false,
-  },
-});
+import client from '../config/elasticsearchClient';
 
 const searchController = async (req: Request, res: Response) => {
   try {
