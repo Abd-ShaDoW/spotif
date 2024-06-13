@@ -9,7 +9,7 @@ import {
 import { EntityType } from '../helpers/entityType';
 import { generateToken } from '../helpers/token';
 import { authSchema, passwordResetSchema } from '../helpers/validate';
-import fs from 'fs';
+import { removeOldFile } from '../helpers/util';
 
 const prisma = new PrismaClient();
 
@@ -110,7 +110,7 @@ export const signIn = async (req: Request, res: Response) => {
       {
         id: user.id,
         name: user.userName,
-        entityType: 'user',
+        entityType: EntityType.User,
       },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_LIFETIME }
@@ -145,11 +145,7 @@ export const update = async (req: Request, res: Response) => {
     });
 
     // If there is new imagepath then delete the old if it exist
-    if (imagepath && old.image) {
-      if (fs.existsSync(old.image)) {
-        fs.unlinkSync(old.image);
-      }
-    }
+    removeOldFile(imagepath, old.image);
 
     return res.status(200).json(user);
   } catch (e) {
