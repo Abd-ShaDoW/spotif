@@ -1,15 +1,11 @@
 # Specify base image
 FROM node:20-alpine
 
-# Install postgresql-client
-RUN apk --no-cache add postgresql-client
-
 # Set the working directory in the container
 WORKDIR /usr/app
 
 # Copy package.json and package-lock.json to the working directory
 COPY ./package*.json ./
-COPY prisma ./prisma
 
 # Install dependencies 
 RUN npm install
