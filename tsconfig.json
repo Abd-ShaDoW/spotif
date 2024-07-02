@@ -6,5 +6,5 @@
     "sourceMap": true,
     "noImplicitAny": true
   },
-  "include": ["src/**/*", "app.ts"]
+  "include": ["src/**/*", "server.ts"]
 }

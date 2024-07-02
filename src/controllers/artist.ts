@@ -5,12 +5,14 @@ import JWT from 'jsonwebtoken';
 import {
   sendEmailConfirmation,
   sendPasswordResetEmail,
-} from '../middleware/emailUtil';
-import { EntityType } from '../helpers/entityType';
+} from '../util/emailUtil';
+import { EntityType } from '../entity/userTypes';
 import { generateToken } from '../helpers/token';
 import { authSchema, passwordResetSchema } from '../helpers/validate';
 import client from '../config/elasticsearchClient';
-import { removeOldFile } from '../helpers/util';
+import { removeOldFile } from '../util/fileUtil';
+
+//// Todo: istead if returning errors return status code with informative massege
 
 export const signUp = async (req: Request, res: Response) => {
   try {
@@ -220,8 +222,10 @@ export const update = async (req: Request, res: Response) => {
       );
     };
 
-    await updateAlbums(artist.id, artist.name);
-    await updateSongs(artist.id, artist.name);
+    if (old.name !== artist.name) {
+      await updateAlbums(artist.id, artist.name);
+      await updateSongs(artist.id, artist.name);
+    }
 
     // If there is new imagepath then delete the old if it exist
     removeOldFile(imagePath, old.image);

@@ -2,6 +2,9 @@ import prisma from '../config/prismaClient';
 import { Request, Response } from 'express';
 import client from '../config/elasticsearchClient';
 
+// Todo: 1- create update+delete function for albums with elasticsearch
+//2- istead if returning errors return status code with informative massege
+
 export const create = async (req: Request, res: Response) => {
   try {
     // Image path

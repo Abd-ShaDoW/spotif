@@ -1,7 +1,9 @@
 import prisma from '../config/prismaClient';
 import { Request, Response } from 'express';
 import client from '../config/elasticsearchClient';
-import { removeOldFile } from '../helpers/util';
+import { removeOldFile } from '../util/fileUtil';
+
+// Todo: istead if returning errors return status code with informative massege
 
 export const create = async (req: Request, res: Response) => {
   try {

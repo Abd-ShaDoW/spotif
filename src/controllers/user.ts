@@ -1,15 +1,17 @@
-import prisma from '../config/prismaClient';
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import JWT from 'jsonwebtoken';
+import prisma from '../config/prismaClient';
 import {
   sendEmailConfirmation,
   sendPasswordResetEmail,
-} from '../middleware/emailUtil';
-import { EntityType } from '../helpers/entityType';
+} from '../util/emailUtil';
 import { generateToken } from '../helpers/token';
 import { authSchema, passwordResetSchema } from '../helpers/validate';
-import { removeOldFile } from '../helpers/util';
+import { EntityType } from '../entity/userTypes';
+import { removeOldFile } from '../util/fileUtil';
+
+// Todo: istead if returning errors return status code with informative massege
 
 export const signUp = async (req: Request, res: Response) => {
   try {

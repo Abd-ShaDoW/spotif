@@ -1,12 +1,12 @@
 import JWT from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
-import { EntityType } from '../helpers/entityType';
+import { EntityType } from '../entity/userTypes';
 
 declare global {
   namespace Express {
     interface Request {
-      user?: { id: number; userName: string }; // Define the user property type
-      artist?: { id: number; name: string }; // Define the artist property type
+      user?: { id: number; userName: string };
+      artist?: { id: number; name: string };
     }
   }
 }
