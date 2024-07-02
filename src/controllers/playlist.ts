@@ -1,8 +1,9 @@
 import prisma from '../config/prismaClient';
 import { Request, Response } from 'express';
-import { removeOldFile } from '../helpers/util';
+import { removeOldFile } from '../util/fileUtil';
 
-// Create routers for the playlists and check the controllers
+// Todo: 1- create delete playlist function
+// 2- istead if returning errors return status code with informative massege
 
 export const create = async (req: Request, res: Response) => {
   try {

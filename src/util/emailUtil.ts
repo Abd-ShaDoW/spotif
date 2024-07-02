@@ -1,5 +1,5 @@
 import nodemailer, { Transporter } from 'nodemailer';
-import { EntityType } from '../helpers/entityType';
+import { EntityType } from '../entity/userTypes';
 import dotenv from 'dotenv';
 dotenv.config();
 
