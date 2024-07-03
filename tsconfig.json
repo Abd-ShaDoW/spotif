@@ -4,7 +4,8 @@
     "baseUrl": "src",
     "outDir": "dist",
     "sourceMap": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "noEmit": true
   },
   "include": ["src/**/*", "server.ts"]
 }
